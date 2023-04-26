@@ -16,7 +16,8 @@ class Yandex_Cloud
     }
     public function sendToStorage(): void
     {
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/wordpress/wp-content/uploads/202*/';
+        $currentYear = date('Y');
+        $dir = $_SERVER['DOCUMENT_ROOT'] . "/wordpress/wp-content/uploads/{$currentYear}";
         // Получение списка файлов в папке
         $folders = array_diff(scandir($dir), array('.', '..'));
         foreach ($folders as $folder) {
@@ -38,7 +39,7 @@ class Yandex_Cloud
                 try {
                     $result = $this->s3->putObject([
                         'Bucket' => $this->bucket,
-                        'Key' => $folderName . '/' . $file,
+                        'Key' => "wp-content/uploads/{$currentYear}" . $folderName . '/' . $file,
                         'SourceFile' => $filePath,
                         'ACL' => 'public-read',
                     ]);
