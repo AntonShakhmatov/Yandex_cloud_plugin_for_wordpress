@@ -17,16 +17,22 @@ class Yandex_Cloud
     public function sendToStorage(): void
     {
         $currentYear = date('Y');
-        $dir = $_SERVER['DOCUMENT_ROOT'] . "/wordpress/wp-content/uploads/{$currentYear}";
+        $dir = $_SERVER['DOCUMENT_ROOT'] . "/wordpress/wp-content/uploads/{$currentYear}/";
         // Получение списка файлов в папке
         $folders = array_diff(scandir($dir), array('.', '..'));
         foreach ($folders as $folder) {
             $folderName = basename($folder);
+            $getObject = $this->s3->getObjectUrl(
+                $this->bucket,
+                $folderName . '/',
+            );
+            if($getObject === false){
             // Создаем папку в корне бакета
             $this->s3->putObject([
                 'Bucket' => $this->bucket,
                 'Key' => $folderName . '/',
             ]);
+        }else{
             $files = array_diff(scandir($dir . $folderName), array('.', '..'));
             // Цикл по всем файлам
             foreach ($files as $file) {
@@ -34,12 +40,13 @@ class Yandex_Cloud
                     continue;
                 }
                 // Пропускаем . и ..
+        }
                 // Путь к текущей картинке
                 $filePath = $dir . $folderName . '/' . $file;
                 try {
                     $result = $this->s3->putObject([
                         'Bucket' => $this->bucket,
-                        'Key' => "wp-content/uploads/{$currentYear}" . $folderName . '/' . $file,
+                        'Key' => "wp-content/uploads/{$currentYear}/" . $folderName . '/' . $file,
                         'SourceFile' => $filePath,
                         'ACL' => 'public-read',
                     ]);

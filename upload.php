@@ -38,7 +38,7 @@ function yandexcloud_cdn_plugin_image_url( $url ) {
     if ( preg_match( '/\.(jpg|jpeg|png|gif)(\?.*)?$/', $url ) ) {
   
       // Replace the domain name
-      $new_url = str_replace( home_url(), 'https://storage.yandexcloud.net/<bucket_name>', $url );
+      $new_url = str_replace( home_url(), 'https://storage.yandexcloud.net/<bucketName>', $url );
   
       // Return the new URL
       return $new_url;
